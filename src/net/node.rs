@@ -39,7 +39,6 @@ pub struct PeerConnection {
     pub id:     u64,
 }
 
-/// A peer whose handshake is not yet complete — not in the peers list.
 #[derive(Clone)]
 pub struct PendingPeer {
     pub sender: mpsc::Sender<Message>,
@@ -47,10 +46,8 @@ pub struct PendingPeer {
     pub ip:     String,
 }
 
-/// Events sent by peer threads to the main node loop.
 pub enum NetEvent {
     Message(Message),
-    /// Peer disconnected before handshake completed.
     PendingDisconnected,
 }
 
@@ -74,8 +71,6 @@ impl Node {
         (node, rx)
     }
 
-    /// Accept an inbound TCP connection.
-    /// The peer is placed in pending until the handshake completes.
     pub async fn accept_connection(
         self: &Arc<Self>,
         stream: TcpStream,
@@ -112,8 +107,7 @@ impl Node {
         pending.iter().any(|p| p.ip == addr.split(':').next().unwrap_or(addr))
     }
 
-    /// Initiate an outbound TCP connection.
-    /// The peer is placed in pending until the handshake completes.
+
     pub async fn connect_to_peer(
         self: &Arc<Self>,
         addr: &str,
@@ -153,7 +147,6 @@ impl Node {
             drop(utxoset);
             self.mark_block_seen(block.hash).await;
             self.broadcast(Message::NewBlock(block)).await;
-            // clear mempool of transactions that were included in the block
             mempool.clear()
         } else {
             eprintln!("no transactions to mine");
@@ -161,8 +154,7 @@ impl Node {
 
     }
 
-    /// Spawn the read/write loop for a new connection and add it to pending.
-    /// The peer stays pending until `promote_peer` is called after handshake.
+
     async fn register_pending(
         self: &Arc<Self>,
         stream: TcpStream,
@@ -215,9 +207,6 @@ impl Node {
         peer_id
     }
 
-    /// Called after a successful handshake.
-    /// Moves the peer from pending to the active peers list using the
-    /// listening_port announced in their Version message.
     pub async fn promote_peer(&self, peer_id: u64, listening_port: u16) {
         let pending = {
             let mut pending = self.pending_peers.lock().await;

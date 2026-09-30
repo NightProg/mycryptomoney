@@ -33,7 +33,6 @@ impl Blockchain {
 
         let subsidy = compute_subsidy(height);
         let fee = block.transactions.iter().map(|tx| utxoset.calculate_fee(tx)).sum::<u64>();
-        // Add coinbase transaction
         let mut coinbase_tx = Transaction::new(
             vec![],
             vec![TxOutput {
@@ -102,6 +101,6 @@ mod tests {
 
         blockchain.mine_block(vec![tx1, tx2], (private_key, public_key), &mut utxoset);
         assert_eq!(blockchain.blocks.len(), 1);
-        assert_eq!(blockchain.blocks[0].transactions.len(), 3); // 2 transactions + 1 coinbase
+        assert_eq!(blockchain.blocks[0].transactions.len(), 3); 
     }
 }

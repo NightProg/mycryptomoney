@@ -17,9 +17,6 @@ pub async fn handle_message(node: Arc<Node>, peer_id: u64, message: Message) {
 
             node.send_to_pending(peer_id, Message::VerAck).await;
 
-            // Handshake complete — move from pending to active peers.
-            // listening_port comes from the Version message, not from the TCP connection,
-            // because the TCP source port is ephemeral and useless for reconnecting.
             node.promote_peer(peer_id, listening_port).await;
 
             println!("peer {} identified: {} (height {})", peer_id, user_agent, peer_height);
@@ -148,14 +145,12 @@ pub async fn handle_message(node: Arc<Node>, peer_id: u64, message: Message) {
 
         Message::GetPeers => {
             let addrs = node.peer_addrs().await;
-            // filter out the requesting peer's own address, if present
             node.send_to_peer(peer_id, Message::Peers(addrs)).await;
         }
 
         Message::Peers(addrs) => {
             for addr in addrs {
                 println!("peer {} knows about {}", peer_id, addr);
-                // check if the addr is not the peer's own address (can happen if the peer is behind NAT and shares the same external IP)
                 let local_addrs = format!("127.0.0.1:{}", node.listening_port);
                 if addr == local_addrs {
                     continue;

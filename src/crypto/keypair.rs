@@ -150,7 +150,7 @@ impl PublicKey {
                 result = result.add(&addend);
             }
             addend  = addend.double();
-            k >>= 1;  // division par 2 via bit shift
+            k >>= 1;  
         }
 
         result

@@ -93,7 +93,6 @@ impl Blockchain {
                 return false;
             }
         }
-        // check if a transaction is not used more than once in the block
         let mut seen_inputs = std::collections::HashSet::new();
         for tx in &block.transactions {
             for input in &tx.inputs {

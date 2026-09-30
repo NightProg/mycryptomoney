@@ -97,7 +97,6 @@ impl Wallet {
 
 
     pub fn get_address(&self) -> String {
-        // For simplicity, we will just return the public key as a hex string
         hex::encode(self.public_key.to_bytes())
     }
 
@@ -157,12 +156,10 @@ impl Wallet {
         );
 
         let mut nonce = aes_gcm::Nonce::from_slice(&[0u8; 12]).clone();
-        // fill nonce with random bytes
         rand::fill(nonce.as_mut_slice());
 
         let serialized = rkyv::to_bytes::<Error>(self).unwrap();
         let ciphertext = cipher.encrypt(&nonce, serialized.as_ref()).unwrap();
-        // Save salt and ciphertext to file
         let mut file = std::fs::File::create(filename).unwrap();
         file.write_all(salt.as_bytes()).unwrap();
         file.write_all(nonce.as_slice()).unwrap();

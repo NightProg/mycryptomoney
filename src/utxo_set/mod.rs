@@ -148,10 +148,8 @@ mod tests {
         tx.sign(&[(private_key.clone(), public_key.clone())]);
 
         assert!(utxoset.verify_tx(&tx));
-        // Apply the transaction to the UTXO set
         utxoset.apply_tx(&tx, 0);
 
-        // Check double spending
         let mut double_spend_tx = Transaction::new(
             vec![TxInput {
                 key: UTXOKey {

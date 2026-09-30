@@ -8,7 +8,7 @@ use mycryptomoney::wallet::Wallet;
 #[tokio::main]
 async fn main() {
     let mut wallet = Wallet::new();
-    let mut blockchain = Blockchain::new();""
+    let mut blockchain = Blockchain::new();
     let mut utxo_set = UTXOSet::new();
 
     wallet.mine_block(&[], &mut blockchain, &mut utxo_set);
