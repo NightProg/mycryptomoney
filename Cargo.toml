@@ -1,0 +1,24 @@
+[package]
+name = "mycryptomoney"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "peer0"
+path = "src/peer0.rs"
+
+[[bin]]
+name = "peer1"
+path = "src/peer1.rs"
+
+[dependencies]
+rug = "1.29.0"
+sha2 = "0.11.0"
+rand = "0.10.0"
+serde = { version = "1.0", features = ["derive"] }
+argon2 = "0.6.0-rc.8"
+base64 = "0.22.1"
+aes-gcm = "0.10.3"
+hex = "0.4.3"
+tokio = { version = "1.51.0", features = ["full"] }
+rkyv = "0.8.15"
